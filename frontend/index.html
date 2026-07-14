@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="student" data-theme="blue" data-dark="false">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kaizen — Stay In It</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/style.css"/>
+</head>
+<body>
+
+<div id="screen-intro" class="screen active">
+  <div class="intro-slides">
+    <div class="intro-slide active">
+      <div class="slide-visual">
+        <div class="orb o1"></div><div class="orb o2"></div>
+        <div class="kaizen-logo-big"><span class="kz-k">K</span><span class="kz-rest">aizen</span></div>
+      </div>
+      <div class="slide-text">
+        <h2>Study together.<br>Go further.</h2>
+        <p>Live rooms, XP battles, and focus detection that actually works.</p>
+      </div>
+    </div>
+    <div class="intro-slide">
+      <div class="slide-visual">
+        <div class="orb o3"></div>
+        <div class="feat-grid">
+          <div class="feat-card">⚔️ XP Battles</div>
+          <div class="feat-card">🏆 Leaderboard</div>
+          <div class="feat-card">👥 Live Rooms</div>
+          <div class="feat-card">🎯 Auto Challenges</div>
+          <div class="feat-card">🔒 Camera stays local</div>
+          <div class="feat-card">❤️ HP system</div>
+        </div>
+      </div>
+      <div class="slide-text">
+        <h2>Built different.</h2>
+        <p>Camera detection runs 100% on your device. Nothing is sent anywhere.</p>
+      </div>
+    </div>
+    <div class="intro-slide">
+      <div class="slide-visual">
+        <div class="orb o4"></div>
+        <div class="mode-cards">
+          <div class="mode-card mc-student"><span>📚</span><b>Student</b><small>12 themes · calm focus</small></div>
+          <div class="mode-card mc-gamer"><span>🎮</span><b>Gamer</b><small>Rank up · win battles</small></div>
+        </div>
+      </div>
+      <div class="slide-text">
+        <h2>Your style.</h2>
+        <p>Student or Gamer mode. 6 colors × light/dark. Switch anytime.</p>
+      </div>
+    </div>
+  </div>
+  <div class="intro-nav">
+    <div class="dots"><span class="dot active"></span><span class="dot"></span><span class="dot"></span></div>
+    <button id="btn-intro-next" class="btn-intro">Next →</button>
+  </div>
+</div>
+
+<div id="screen-auth" class="screen">
+  <div class="auth-glow"></div>
+  <div class="auth-card">
+    <div class="auth-brand"><span class="brand-mark">K</span><span class="brand-name">Kaizen</span></div>
+    <div class="auth-tabs">
+      <button class="atab active" data-tab="register">Create Account</button>
+      <button class="atab" data-tab="login">Sign In</button>
+    </div>
+
+    <div id="form-register" class="aform active">
+      <div class="reg-step active" id="rs1">
+        <p class="step-lbl">Who are you?</p>
+        <div class="two-col">
+          <button class="pick-btn active" data-pick="student"><span>📚</span><b>Student</b><small>Clean & focused</small></button>
+          <button class="pick-btn" data-pick="gamer"><span>🎮</span><b>Gamer</b><small>Grind & rank up</small></button>
+        </div>
+        <div class="fg"><label class="fl">Year</label>
+          <select id="r-year" class="fi fs">
+            <option value="freshman">🟢 Freshman</option>
+            <option value="sophomore">🔵 Sophomore</option>
+            <option value="junior">🟡 Junior</option>
+            <option value="senior">🔴 Senior</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">School</label>
+          <select id="r-school" class="fi fs" onchange="updateMajors()">
+            <option value="SSE">School of Science & Engineering</option>
+            <option value="SB">School of Business</option>
+            <option value="SHSS">School of Humanities & Social Sciences</option>
+            <option value="SL">School of Law</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">Major</label>
+          <select id="r-major" class="fi fs"></select>
+        </div>
+        <button class="btn-step" onclick="toStep(2)">Continue →</button>
+      </div>
+
+      <div class="reg-step" id="rs2">
+        <p class="step-lbl">Your account</p>
+        <div class="fg"><label class="fl">Username</label>
+          <div class="iw"><input id="r-uname" class="fi" type="text" placeholder="letters, numbers, _" maxlength="20" autocomplete="off"/>
+          <span id="uname-ok"></span></div>
+          <div id="uname-sugg" class="sugg-row"></div>
+        </div>
+        <div class="fg"><label class="fl">Email</label>
+          <input id="r-email" class="fi" type="email" placeholder="you@aui.ma"/>
+        </div>
+        <div class="fg"><label class="fl">Password</label>
+          <div class="iw"><input id="r-pw" class="fi" type="password" placeholder="Min 8 characters"/>
+          <button class="eye-btn" onclick="togglePw('r-pw')">👁</button></div>
+          <div class="pw-bar"><div class="pw-fill" id="pw-fill"></div></div>
+        </div>
+        <div class="fg"><label class="fl">Confirm Password</label>
+          <input id="r-pw2" class="fi" type="password" placeholder="Repeat password"/>
+        </div>
+        <p class="privacy-note">🔒 Camera never leaves your device. No video stored anywhere.</p>
+        <button class="btn-primary" id="reg-btn" onclick="submitRegister()">Create Account</button>
+        <p class="err" id="reg-err"></p>
+      </div>
+
+      <div class="reg-step" id="rs3">
+        <div class="verify-sent">
+          <div class="verify-icon">📬</div>
+          <h3>Check your email</h3>
+          <p id="verify-email-hint">We sent a verification link to your email.</p>
+          <p class="verify-sub">Click the link then come back and sign in.</p>
+          <button class="btn-primary" onclick="switchTab('login')">Go to Sign In</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="form-login" class="aform">
+      <div class="fg"><label class="fl">Username or Email</label>
+        <input id="l-id" class="fi" type="text" placeholder="your username or email"/>
+      </div>
+      <div class="fg"><label class="fl">Password</label>
+        <div class="iw"><input id="l-pw" class="fi" type="password" placeholder="your password"/>
+        <button class="eye-btn" onclick="togglePw('l-pw')">👁</button></div>
+      </div>
+      <button class="btn-primary" onclick="submitLogin()">Sign In</button>
+      <button class="btn-ghost" onclick="forgotPw()">Forgot password?</button>
+      <p class="err" id="login-err"></p>
+    </div>
+
+    <div class="guest-divider"><span>or</span></div>
+    <button class="btn-guest" onclick="enterGuest()">Continue as Guest</button>
+    <p class="guest-note">Guest XP disappears on refresh. No rooms, no leaderboard.</p>
+  </div>
+</div>
+
+<div id="screen-home" class="screen">
+  <header class="bar">
+    <div class="bar-left">
+      <div class="av-btn" id="home-av" onclick="goTo('profile')"></div>
+      <div>
+        <div class="bar-uname" id="home-uname">—</div>
+        <div class="tags" id="home-tags"></div>
+      </div>
+    </div>
+    <div class="bar-right">
+      <div class="pill xp-pill">⚡<span id="home-xp">0</span><span class="pill-unit" id="xp-lbl">XP</span></div>
+      <div class="pill hp-pill">❤️<span id="home-hp">100</span><span class="pill-unit">HP</span></div>
+      <button class="ib" onclick="goTo('leaderboard')">🏆</button>
+      <button class="ib" onclick="goTo('friends')">👥</button>
+      <button class="ib" onclick="goTo('profile')">👤</button>
+    </div>
+  </header>
+
+  <div class="hp-row"><div class="hp-track"><div class="hp-fill" id="hp-fill" style="width:100%"></div></div><span class="hp-lbl" id="hp-lbl">100/100</span></div>
+  <div class="live-bar"><span class="live-dot"></span><span id="live-count">Connecting...</span></div>
+
+  <div class="home-scroll">
+
+    <section class="hsec">
+      <div class="shdr"><span class="stitle" id="ch-title">🎯 Daily Challenges</span><span class="sright">Resets in <b id="reset-t">--:--:--</b></span></div>
+      <div id="ch-list"></div>
+    </section>
+
+    <section class="hsec">
+      <div class="shdr"><span class="stitle">⚔️ Battle Arena</span><button class="btn-link" onclick="goTo('battles')">View All →</button></div>
+      <div id="battle-preview" class="battle-preview-row"></div>
+    </section>
+
+    <section class="hsec">
+      <div class="shdr"><span class="stitle">👥 Friends Online</span><button class="btn-link" onclick="goTo('friends')">Manage →</button></div>
+      <div id="friends-online" class="fo-scroll"></div>
+    </section>
+
+    <section class="hsec" id="sugg-sec" style="display:none">
+      <div class="shdr"><span class="stitle">✨ Suggested for You</span></div>
+      <div id="sugg-rooms" class="rooms-list"></div>
+    </section>
+
+    <section class="hsec">
+      <div class="shdr"><span class="stitle" id="rooms-title">📚 Study Rooms</span><button class="btn-link" onclick="openCreateRoom()">+ Create</button></div>
+      <div id="rooms-list" class="rooms-list"></div>
+    </section>
+
+  </div>
+</div>
+
+<div id="modal-room" class="modal-bg hidden">
+  <div class="modal-card">
+    <div class="modal-hdr"><span class="modal-title">Create a Room</span><button class="modal-x" onclick="closeCreateRoom()">✕</button></div>
+    <div class="fg"><label class="fl">Room Name <span style="color:var(--t3);font-weight:400;text-transform:none">(must be unique)</span></label>
+      <input id="nr-name" class="fi" type="text" placeholder="e.g. Organic Chem SOS" maxlength="40"/>
+      <span class="err" id="nr-err"></span>
+    </div>
+    <div class="fg"><label class="fl">Subject</label>
+      <select id="nr-subj" class="fi fs">
+        <option value="math">📐 Calculus / Linear Algebra</option>
+        <option value="cs">💻 Computer Science / DSA</option>
+        <option value="physics">⚛️ Physics I / II</option>
+        <option value="chemistry">🧪 Chemistry / Organic Chem</option>
+        <option value="biology">🧬 Biology</option>
+        <option value="econ">📊 Economics / Finance</option>
+        <option value="management">🏢 Management / Marketing</option>
+        <option value="law">⚖️ Law</option>
+        <option value="arabic">🌙 Arabic / Islamic Studies</option>
+        <option value="french">🇫🇷 French</option>
+        <option value="english">📝 English / Writing</option>
+        <option value="history">📜 History / Politics</option>
+        <option value="open">✨ Open / Mixed</option>
+      </select>
+    </div>
+    <div class="fg"><label class="fl">Max People (2–20)</label>
+      <input id="nr-max" class="fi" type="number" value="10" min="2" max="20"/>
+    </div>
+    <div class="fg"><label class="fl">Camera Bonus</label>
+      <label class="tog-row"><div class="tog"><input type="checkbox" id="nr-cam"/><span class="tok"></span></div><span>Encourage camera <b class="bonus">+20% XP</b></span></label>
+    </div>
+    <button class="btn-primary" onclick="submitCreateRoom()">Create Room</button>
+  </div>
+</div>
+
+<div id="screen-focus" class="screen">
+  <header class="bar">
+    <div class="bar-left">
+      <button class="back-btn" onclick="leaveRoom()">← Leave</button>
+      <div><span class="bar-title" id="f-room-name">Room</span><span class="bar-sub" id="f-room-sub">0/0</span></div>
+    </div>
+    <div class="bar-right">
+      <div class="pill hp-pill sm">❤️<span id="f-hp">100</span></div>
+      <div class="pill xp-pill sm">⚡<span id="f-xp">0</span></div>
+    </div>
+  </header>
+
+  <div class="focus-layout">
+    <div class="focus-left">
+      <div class="timer-card">
+        <div class="ring-wrap">
+          <svg class="ring-svg" viewBox="0 0 160 160">
+            <circle class="ring-bg"   cx="80" cy="80" r="70"/>
+            <circle class="ring-fg"   id="ring-fg" cx="80" cy="80" r="70" stroke-dasharray="439.8" stroke-dashoffset="439.8"/>
+          </svg>
+          <div class="ring-inner">
+            <span class="ring-time" id="ring-time">00:00</span>
+            <span class="ring-mult" id="ring-mult">1×</span>
+          </div>
+        </div>
+
+        <div class="fstats">
+          <div class="fstat"><span class="fstat-v" id="f-xp-val">0</span><span class="fstat-l" id="f-xp-lbl">XP earned</span></div>
+          <div class="fstat"><span class="fstat-v" id="f-streak">0🔥</span><span class="fstat-l">Streak</span></div>
+        </div>
+
+        <div class="cam-section">
+          <label class="tog-row">
+            <div class="tog"><input type="checkbox" id="cam-tog" onchange="toggleCamera()"/><span class="tok"></span></div>
+            <span class="cam-lbl">Focus camera <b class="bonus">+20% XP</b></span>
+          </label>
+          <p class="cam-note">🔒 All detection runs locally — zero data sent</p>
+          <div id="cam-wrap" class="cam-wrap hidden">
+            <video id="cam-vid" autoplay muted playsinline></video>
+            <canvas id="cam-canvas" style="display:none"></canvas>
+            <div class="cam-hud">
+              <span class="cam-dot focusing" id="cam-dot"></span>
+              <span id="cam-txt">Detecting...</span>
+            </div>
+          </div>
+          <div id="warn-box" class="warn-box hidden">
+            <span class="warn-ico">⚠️</span>
+            <span id="warn-txt">Hey! Eyes on the screen!</span>
+          </div>
+        </div>
+
+        <button id="focus-btn" class="focus-btn" onclick="toggleFocus()">
+          <span id="focus-ico">▶</span><span id="focus-lbl">Start Focusing</span>
+        </button>
+        <div class="status-row">
+          <span class="sdot" id="sdot"></span>
+          <span id="stxt">Ready when you are</span>
+        </div>
+      </div>
+
+      <div class="room-ch-panel" id="room-ch-panel"></div>
+    </div>
+
+    <div class="focus-right">
+      <div class="users-panel">
+        <p class="panel-title">In this room (<span id="room-uc">0</span>)</p>
+        <ul id="users-list" class="users-list"></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="screen-battles" class="screen">
+  <header class="bar">
+    <div class="bar-left"><button class="back-btn" onclick="goTo('home')">←</button><span class="bar-title">⚔️ Battle Arena</span></div>
+  </header>
+  <div class="battles-body">
+    <p class="battle-desc">Challenge a friend to a timed focus battle. Winner takes all XP from both sides.</p>
+
+    <div class="battle-durations">
+      <button class="dur-btn active" data-min="25" onclick="selectDuration(25,this)">⚡ 25 min</button>
+      <button class="dur-btn" data-min="50" onclick="selectDuration(50,this)">🔥 50 min</button>
+      <button class="dur-btn" data-min="120" onclick="selectDuration(120,this)">💀 120 min</button>
+    </div>
+
+    <div class="fg" style="margin-top:16px">
+      <label class="fl">Challenge someone</label>
+      <div class="search-bar">
+        <input id="battle-search" class="fi" type="text" placeholder="Username or KZEN# ID..."/>
+        <button class="btn-accent" onclick="searchBattleTarget()">Search</button>
+      </div>
+    </div>
+    <div id="battle-target-result" class="friend-result hidden"></div>
+
+    <p class="panel-title" style="margin:24px 0 10px">Recent Battles</p>
+    <div id="recent-battles" class="recent-battles">
+      <p style="color:var(--t3);font-size:13px">No battles yet. Challenge someone!</p>
+    </div>
+  </div>
+</div>
+
+<div id="screen-battle-live" class="screen">
+  <header class="bar">
+    <div class="bar-left"><span class="bar-title" id="battle-live-title">⚔️ Battle</span></div>
+    <div class="bar-right">
+      <div class="pill xp-pill sm">⚡<span id="bl-my-xp">0</span></div>
+      <button class="btn-forfeit" onclick="forfeitBattle()">Forfeit</button>
+    </div>
+  </header>
+
+  <div class="battle-live-body">
+    <div class="battle-countdown" id="battle-countdown">
+      <span class="bcd-label">Battle starts in</span>
+      <span class="bcd-num" id="bcd-num">3</span>
+    </div>
+
+    <div class="battle-arena" id="battle-arena" style="display:none">
+      <div class="battle-side my-side">
+        <div class="bs-name" id="bl-my-name">You</div>
+        <div class="bs-ring-wrap">
+          <svg class="bs-ring" viewBox="0 0 120 120">
+            <circle class="ring-bg" cx="60" cy="60" r="52"/>
+            <circle class="ring-fg" id="bl-my-ring" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+          </svg>
+          <div class="bs-inner">
+            <span class="bs-xp" id="bl-my-xp-big">0</span>
+            <span class="bs-xp-lbl">XP</span>
+          </div>
+        </div>
+        <div class="bs-status" id="bl-my-status">Waiting...</div>
+      </div>
+
+      <div class="battle-vs">
+        <div class="vs-timer" id="bl-timer">25:00</div>
+        <div class="vs-label">VS</div>
+      </div>
+
+      <div class="battle-side opp-side">
+        <div class="bs-name" id="bl-opp-name">Opponent</div>
+        <div class="bs-ring-wrap">
+          <svg class="bs-ring" viewBox="0 0 120 120">
+            <circle class="ring-bg" cx="60" cy="60" r="52"/>
+            <circle class="ring-fg opp-ring" id="bl-opp-ring" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+          </svg>
+          <div class="bs-inner">
+            <span class="bs-xp" id="bl-opp-xp-big">0</span>
+            <span class="bs-xp-lbl">XP</span>
+          </div>
+        </div>
+        <div class="bs-status" id="bl-opp-status">Waiting...</div>
+      </div>
+    </div>
+
+    <div class="battle-focus-controls" id="battle-focus-controls" style="display:none">
+      <button id="battle-focus-btn" class="focus-btn" onclick="toggleBattleFocus()">
+        <span id="battle-focus-ico">▶</span><span id="battle-focus-lbl">Start Focusing</span>
+      </button>
+      <p style="font-size:12px;color:var(--t3);text-align:center;margin-top:8px">Stay focused longer = more XP = you win</p>
+    </div>
+  </div>
+</div>
+
+<div id="screen-battle-result" class="screen">
+  <div class="result-body">
+    <div class="result-icon" id="result-icon">🏆</div>
+    <h2 class="result-title" id="result-title">You Won!</h2>
+    <p class="result-sub" id="result-sub">+420 XP claimed</p>
+    <div class="result-breakdown" id="result-breakdown"></div>
+    <button class="btn-primary" onclick="goTo('home')" style="margin-top:24px">Back to Home</button>
+  </div>
+</div>
+
+<div id="screen-leaderboard" class="screen">
+  <header class="bar">
+    <div class="bar-left"><button class="back-btn" onclick="goTo('home')">←</button><span class="bar-title" id="lb-title">Leaderboard</span></div>
+    <div class="tab-row">
+      <button class="tab active" onclick="switchLBTab('daily')">Daily</button>
+      <button class="tab" onclick="switchLBTab('monthly')">Monthly</button>
+    </div>
+  </header>
+  <div class="lb-body"><div id="lb-list"></div></div>
+</div>
+
+<div id="screen-friends" class="screen">
+  <header class="bar">
+    <div class="bar-left"><button class="back-btn" onclick="goTo('home')">←</button><span class="bar-title">Friends</span></div>
+  </header>
+  <div class="friends-body">
+    <div class="search-bar">
+      <input id="f-search" class="fi" type="text" placeholder="Search username or KZEN#..."/>
+      <button class="btn-accent" onclick="searchFriend()">Search</button>
+    </div>
+    <div id="f-result" class="friend-result hidden"></div>
+    <p class="panel-title" style="margin:20px 0 10px">Your Friends</p>
+    <div id="friends-list"></div>
+  </div>
+</div>
+
+<div id="screen-profile" class="screen">
+  <header class="bar">
+    <div class="bar-left"><button class="back-btn" onclick="goTo('home')">←</button><span class="bar-title">Profile</span></div>
+    <button class="ib" onclick="goTo('friends')">👥</button>
+  </header>
+  <div class="profile-body">
+    <div class="profile-top">
+      <div class="profile-av" id="profile-av"></div>
+      <div>
+        <h2 class="profile-name" id="p-name">—</h2>
+        <span class="profile-id" id="p-id">KZEN#—</span>
+      </div>
+    </div>
+
+    <div class="id-box">
+      <span id="id-display">KZEN#—</span>
+      <button class="btn-copy" onclick="copyID()">📋 Copy</button>
+    </div>
+
+    <div class="profile-hp">
+      <div class="php-row"><span>❤️ HP</span><span id="p-hp-lbl">100/100</span></div>
+      <div class="hp-track"><div class="hp-fill" id="p-hp-fill" style="width:100%"></div></div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><span class="sv" id="p-xp">0</span><span class="sl" id="p-xp-lbl">Total XP</span></div>
+      <div class="stat-card"><span class="sv" id="p-streak">0🔥</span><span class="sl">Streak</span></div>
+      <div class="stat-card"><span class="sv" id="p-sessions">0</span><span class="sl">Sessions</span></div>
+      <div class="stat-card"><span class="sv" id="p-bw">0⚔️</span><span class="sl">Battles Won</span></div>
+    </div>
+
+    <div class="psec"><p class="psec-lbl">Your ID</p>
+      <div class="id-box"><span id="p-kzen-id">KZEN#—</span><button class="btn-copy" onclick="copyID()">📋 Copy</button></div>
+    </div>
+
+    <div class="psec"><p class="psec-lbl">Mode</p>
+      <div class="two-col">
+        <button class="mode-btn active" id="mb-student" onclick="setMode('student')">📚 Student</button>
+        <button class="mode-btn" id="mb-gamer" onclick="setMode('gamer')">🎮 Gamer</button>
+      </div>
+    </div>
+
+    <div class="psec" id="theme-sec"><p class="psec-lbl">Color Theme</p>
+      <div class="swatch-grid">
+        <button class="swatch active" data-t="blue"   style="--c:#4f7cff"></button>
+        <button class="swatch"        data-t="green"  style="--c:#22c55e"></button>
+        <button class="swatch"        data-t="red"    style="--c:#ef4444"></button>
+        <button class="swatch"        data-t="yellow" style="--c:#f59e0b"></button>
+        <button class="swatch"        data-t="purple" style="--c:#8b5cf6"></button>
+        <button class="swatch"        data-t="orange" style="--c:#f97316"></button>
+      </div>
+      <label class="tog-row" style="margin-top:12px">
+        <div class="tog"><input type="checkbox" id="dark-tog" onchange="toggleDark()"/><span class="tok"></span></div>
+        <span>Dark mode</span>
+      </label>
+    </div>
+
+    <div class="psec gamer-only" id="rank-sec"><p class="psec-lbl">Your Rank</p>
+      <div class="rank-block">
+        <span class="rank-badge" id="rank-badge">🥉 Bronze</span>
+        <div class="rank-bar-wrap">
+          <div class="rank-track"><div class="rank-fill" id="rank-fill" style="width:0%"></div></div>
+          <span class="rank-lbl" id="rank-lbl">0/500 EXP to Silver</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="psec"><p class="psec-lbl">Status</p>
+      <div class="status-opts">
+        <button class="sopt active" data-s="focus" onclick="setStatus('focus')">🔥 Deep Focus</button>
+        <button class="sopt" data-s="break" onclick="setStatus('break')">☕ On a Break</button>
+        <button class="sopt" data-s="done"  onclick="setStatus('done')">✅ Done Today</button>
+      </div>
+    </div>
+
+    <button class="btn-danger" onclick="logout()">Sign Out</button>
+  </div>
+</div>
+
+<script src="/app.js"></script>
+</body>
+</html>
