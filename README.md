@@ -134,9 +134,8 @@ Find your IP with `ipconfig getifaddr en0` on Mac.
 
 ## Status
 
-MVP - in active development.
-Built at Al Akhawayn University, Ifrane, Morocco.
-
+ - in active development.
+ _ vibe coding phase
 ---
 
 ## License
