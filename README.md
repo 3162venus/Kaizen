@@ -1,4 +1,4 @@
-# Kaizen — Stay In It
+# Kaizen — Stay In It (dont download this)
 
 > Real-time competitive study app built for AUI students.
 > Study together, earn XP, battle friends, and stay accountable.
